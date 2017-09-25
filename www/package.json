@@ -1,5 +1,5 @@
 {
-  "name": "itranswarp.js",
+  "name": "nodecms",
   "description": "A full-stack website application based on Nodejs.",
   "version": "2.0.1",
   "private": true,
@@ -17,7 +17,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/michaelliao/itranswarp.js.git"
+    "url": "https://github.com/xuehuiit/nodecms.git"
   },
   "dependencies": {
     "bluebird": "^3.4.6",
