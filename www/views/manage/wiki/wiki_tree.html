@@ -1,0 +1,245 @@
+{% extends '../_manage.html' %}
+
+{% block title %} Wiki Tree List {% endblock %}
+
+{% block head %}
+<script src="/static/js/tree.jquery.js"></script>
+
+<script>
+
+var g_wiki = null;
+
+var g_wiki_id = '{{ id }}';
+
+
+
+var g_wiki_name = null;
+var g_ajaxing = false;
+
+function is_ajaxing() {
+    return g_ajaxing;
+}
+
+function start_ajax() {
+    g_ajaxing = true;
+    $('#ajaxing').show();
+}
+
+function end_ajax() {
+    g_ajaxing = false;
+    $('#ajaxing').hide();
+}
+
+function set_button_enabled(btn, enabled) {
+    if (enabled) {
+        btn.removeAttr('disabled');
+    }
+    else {
+        btn.attr('disabled', 'disabled');
+    }
+}
+
+function update_button_group(node) {
+    set_button_enabled($('#btn-add'), node!==null);
+    set_button_enabled($('#btn-edit'), node!==null);
+    set_button_enabled($('#btn-delete'), node!==null && node.id!=='' && node.children.length===0);
+}
+
+function index_of_me(node) {
+    var L = node.parent.children;
+    for (var i=0; i<L.length; i++) {
+        if (L[i]===node) {
+            return i;
+        }
+    }
+}
+
+function move_api(moved, parent, index) {
+    start_ajax();
+    var pid = parent.id;
+    postJSON('/api/wikis/wikipages/' + moved.id + '/move', {
+        index: index,
+        parent_id: pid
+    }, function(err, result) {
+        end_ajax();
+        showError(err);
+    });
+}
+
+function move_node(moved_node, target_node, position, previous_parent) {
+    if (position=='inside') {
+        // move to target as first child:
+        move_api(moved_node, target_node, 0);
+    }
+    if (position=='after') {
+        // move to target as n position:
+        move_api(moved_node, target_node.parent, index_of_me(target_node) + 1);
+    }
+}
+
+function delete_wikipage() {
+    var node = $('#tree').tree('getSelectedNode');
+
+    if (confirm('Wiki page \"' + node.name + '\" will be deleted. Continue?')) {
+        start_ajax();
+        postJSON('/api/wikis/wikipages/' + node.id + '/delete', function(err, result) {
+            end_ajax();
+            if (err) {
+                showError(err);
+                return;
+            }
+            $('#tree').tree('removeNode', node);
+            preview_wiki(null);
+        });
+    }
+}
+
+function set_preview_error(msg) {
+    $('#wiki-preview-content').html('<span style="color:red">Error: ' + msg + '</span>');
+}
+
+function preview_wiki(node) {
+    // init:
+    if (node==null) {
+        $('#wiki-preview-name').text('Preview');
+        $('#wiki-preview-content').text('');
+        return;
+    }
+    var preview_url = '/wiki/' + g_wiki_id + (node.id=='' ? '' : '/' + node.id);
+    $('#wiki-preview-name').html('<a href="' + preview_url + '" target="_blank">' + $('<div/>').text(node.name).html() + '</a>');
+    $('#wiki-preview-content').text("{{ _('Loading') }}...");
+    var url = node.id==='' ? '/api/wikis/' + g_wiki_id : '/api/wikis/wikipages/' + node.id;
+    getJSON(url, function(err, result) {
+        if (err) {
+            set_preview_error(err.message || err.error);
+            return;
+        }
+        $('#wiki-preview-content').html(marked.parse(result.content));
+    });
+}
+
+$(function() {
+    // load wiki:
+    getJSON('/api/wikis/{{ id }}', function (err, w) {
+        if (err) {
+            return showError(err);
+        }
+        g_wiki = w;
+        g_wiki_name = w.name;
+
+        // load tree data:
+        getJSON('/api/wikis/' + g_wiki.id + '/wikipages', function(err, result) {
+            if (err) {
+                return showError(err);
+            }
+            initTree(result);
+        });
+    });
+});
+
+function initTree(result) {
+    $('#tree').tree({
+        data: [{'id': '', 'name': result.name, 'children': result.children}],
+        autoOpen: true,
+        dragAndDrop: true,
+        onCanMove: function(node) {
+            return ! is_ajaxing() && node.id!=='';
+        },
+        onCanMoveTo: function(moved_node, target_node, position) {
+            return target_node.id!=='';
+        },
+        onCanSelectNode: function(node) {
+            return ! is_ajaxing();
+        }
+    });
+    $('#tree').bind('tree.select', function(event) {
+        update_button_group(event.node);
+        if (event.node) {
+            preview_wiki(event.node);
+        }
+        else {
+            preview_wiki(null);
+        }
+    });
+    $('#tree').bind('tree.move', function(event) {
+        move_node(event.move_info.moved_node, event.move_info.target_node, event.move_info.position, event.move_info.previous_parent);
+    });
+
+    $('#btn-add').click(function() {
+        var $tree = $('#tree');
+        var node = $tree.tree('getSelectedNode');
+        UIkit.modal.prompt("{{ _('Name') }}:", "{{ _('New Wiki Page') }}", function (name) {
+            postJSON('/api/wikis/' + g_wiki.id + '/wikipages', {
+                name: name,
+                content: 'New wiki page content',
+                parent_id: node.id
+            }, function(err, result) {
+                if (err) {
+                    showError(err);
+                    return;
+                }
+                $tree.tree('appendNode', result, node);
+                $tree.tree('openNode', node);
+                $tree.tree('selectNode', $tree.tree('getNodeById', result.id));
+            });
+        });
+    });
+
+    $('#btn-edit').click(function() {
+        var node = $('#tree').tree('getSelectedNode');
+        if (node.id=='') {
+            location.assign('edit_wiki?id=' + g_wiki.id);
+        }
+        else {
+            location.assign('edit_wikipage?id=' + node.id);
+        }
+    });
+
+    $('#btn-delete').click(function() {
+        delete_wikipage();
+    });
+
+    $('#btn-refresh').click(function() {
+        refresh();
+    });
+
+    $('#loading').hide();
+    $('#vm').show();
+}
+</script>
+
+{% endblock %}
+
+{% block main %}
+
+    <div id="loading" class="uk-width-1-1">
+        <i class="uk-icon-spinner uk-icon-spin"></i> {{ _('Loading') }}...
+    </div>
+
+    <div id="vm" class="uk-width-1-1">
+        <ul class="uk-breadcrumb">
+            <li><a href="wiki_list">{{ _('All Wikis') }}</a></li>
+            <li class="uk-active"><span>{{ _('Wiki Index') }}</span></li>
+        </ul>
+
+        <div class="uk-margin uk-button-group">
+            <button id="btn-refresh" class="uk-button"><i class="uk-icon-refresh"></i> {{ _('Refresh') }}</button>
+            <button id="btn-add" disabled class="uk-button"><i class="uk-icon-plus"></i> {{ _('New Wiki Page') }}</button>
+            <button id="btn-edit" disabled class="uk-button"><i class="uk-icon-edit"></i> {{ _('Edit') }}</button>
+            <button id="btn-delete" disabled class="uk-button uk-button-danger"><i class="uk-icon-trash"></i> {{ _('Delete') }}</button>
+        </div>
+
+        <div class="x-placeholder"></div>
+    </div>
+
+    <div class="uk-width-1-4">
+        <div id="tree"></div>
+    </div>
+
+    <div class="uk-width-3-4">
+        <h3 id="wiki-preview-name">{{ _('Preview') }}</h3>
+        <hr>
+        <div id="wiki-preview-content"></div>
+    </div>
+
+{% endblock %}

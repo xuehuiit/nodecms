@@ -1,0 +1,37 @@
+{% extends '../_base.html' %}
+
+<!-- display sidebar on left -->
+{% set __sidebar_left__ = true %}
+
+{% block nav %} /user/ {% endblock %}
+
+{% block title %}{{ user.name }}{% endblock %}
+
+{% block head %}
+
+<style>
+.x-user-visible {
+    display: block;
+}
+</style>
+
+{% endblock %}
+
+{% block sidebar_left_content %}
+    <h3>{{ user.name }}</h3>
+    <div class="uk-clearfix">
+        <img src="{{ user.image_url }}" class="uk-comment-avatar uk-border-circle x-avatar">
+    </div>
+
+    <h3>{{ _('Registration Date') }}</h3>
+    <p><span class="x-smartdate" date="{{ user.created_at }}"></span></p>
+
+{% endblock %}
+
+{% block content %}
+
+    <h3>{{ _('Recent Posts') }}</h3>
+
+    <h3>{{ _('Recent Replies') }}</h3>
+
+{% endblock %}

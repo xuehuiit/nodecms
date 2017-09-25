@@ -1,0 +1,199 @@
+{% extends '../_manage.html' %}
+
+{% block title %} {{ _('All Users') }} {% endblock %}
+
+{% block head %}
+<script>
+var g_currentTime = parseInt('{{ currentTime }}');
+
+$(function() {
+    getJSON('/api/users', {
+        page: parseInt('{{ pageIndex }}')
+    }, function (err, data) {
+        if (err) {
+            return showError(err);
+        }
+        initVM(data);
+    });
+});
+
+function initVM(data) {
+    var vm = new Vue({
+        el: '#vm',
+        data: {
+            users: _.map(data.users, function (u) {
+                u.lockAction = 0;
+                u.unlockAction = 0;
+                return u;
+            }),
+            page: data.page,
+            days: 1
+        },
+        methods: {
+            getRoleName: function (u) {
+                return {
+                    "0": "{{ _('Admin') }}",
+                    "10": "{{ _('Editor') }}",
+                    "100": "{{ _('Contributor') }}",
+                    "1000": "{{ _('Sponsor') }}",
+                    "10000": "{{ _('Subscriber') }}"
+                }[String(u.role)] || 'unknown';
+            },
+            isLocked: function (u) {
+                return u.locked_until > g_currentTime;
+            },
+            getLockTime: function (u) {
+                var t = u.locked_until - g_currentTime;
+                if (t < 3600000) {
+                    return 'Less in 1 hour';
+                }
+                if (t < 86400000) {
+                    return 'in ' + parseInt(t / 3600000, 10) + ' hours';
+                }
+                if (t > 3000000000000) {
+                    return 'forever';
+                }
+                if (t > 31536000000) {
+                    var y = parseInt(t / 31536000000, 10);
+                    var m = parseInt((t - 31536000000 * y) / 2592000000, 10);
+                    var s = 'in ' + y + ' years';
+                    if (m > 0) {
+                        s = s + ' ' + m + ' months';
+                    }
+                    return s;
+                }
+                return 'in ' + parseInt(t / 86400000, 10) + ' days';
+            },
+            updateUserRole: function (u) {
+                var that = this;
+                var role = u.role;
+                UIkit.modal.confirm('The role of user \"' + u.name + '\" will be set to ' + $('option.x-role[value=' + role + ']').first().text() + '. Continue?', function() {
+                    that.$resource('/api/users/' + u.id + '/role').save({
+                        role: role
+                    }).then(function(resp) {
+                        resp.json().then(function (result) {
+                            refresh();
+                        });
+                    }, onJsonError);
+                }, function () {
+                    refresh();
+                });
+            },
+            lockUser: function (u) {
+                var that = this;
+                var days = u.lockAction;
+                UIkit.modal.confirm('User \"' + u.name + '\" will be locked for ' + $('option.x-lock[value=' + days + ']').first().text() + '. Continue?', function() {
+                    that.$resource('/api/users/' + u.id + '/lock').save({
+                        locked_until: days * 3600000 * 24 + g_currentTime
+                    }).then(function(resp) {
+                        resp.json().then(function (result) {
+                            refresh();
+                        });
+                    }, onJsonError);
+                }, function () {
+                    u.lockAction = 0;
+                });
+            },
+            unlockUser: function (u) {
+                var that = this;
+                UIkit.modal.confirm('User \"' + u.name + '\" will be unlocked. Continue?', function() {
+                    that.$resource('/api/users/' + u.id + '/lock').save({
+                        locked_until: 0
+                    }).then(function (resp) {
+                        resp.json().then(function (result) {
+                            refresh();
+                        });
+                    }, onJsonError);
+                }, function () {
+                    u.unlockAction = 0;
+                });
+            }
+        }
+    });
+    $('#loading').hide();
+    $('#vm').show();
+    g_vm = vm;
+}
+</script>
+{% endblock %}
+
+{% block main %}
+
+    <div id="loading" class="uk-width-1-1">
+        <i class="uk-icon-spinner uk-icon-spin"></i> {{ _('Loading') }}...
+    </div>
+
+    <div id="vm" class="uk-width-1-1">
+        <h3>{{ _('All Users') }}</h3>
+
+        <div class="uk-margin uk-clearfix">
+            <a href="javascript:refresh()" class="uk-button"><i class="uk-icon-refresh"></i> {{ _('Refresh') }}</a>
+        </div>
+
+        <table class="uk-table uk-table-hover">
+            <thead>
+                <tr>
+                    <th width="8%">{{ _('Image') }}</th>
+                    <th width="17%">{{ _('Name') }}</th>
+                    <th width="40%">{{ _('Email') }}</th>
+                    <th width="15%">{{ _('Created at') }}</th>
+                    <th width="10%">{{ _('Status') }}</th>
+                    <th width="10%">{{ _('Action') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="u in users">
+                    <td>
+                        <a v-bind:href="'/user/'+u.id" target="_blank"><img v-bind:src="u.image_url" class="uk-comment-avatar uk-border-circle x-avatar" style="width:50px;height:50px;"></a>
+                    </td>
+                    <td>
+                        <a v-bind:href="'/user/'+u.id" target="_blank"><span v-text="u.name"></span></a>
+                        <br>
+                        <span v-if="u.role==0">{{ _('Admin') }}</span>
+                        <select v-if="u.role>0" v-model.number="u.role" v-on:change="updateUserRole(u)">
+                            <option value="10" class="x-role">{{ _('Editor') }}</option>
+                            <option value="100" class="x-role">{{ _('Contributor') }}</option>
+                            <option value="1000" class="x-role">{{ _('Sponsor') }}</option>
+                            <option value="10000" class="x-role">{{ _('Subscriber') }}</option>
+                        </select>
+                    </td>
+                    <td><span v-text="u.email"></span></td>
+                    <td><span v-text="u.created_at.toDateTime()"></span></td>
+                    <td>
+                        <div v-if="! isLocked(u)">
+                            <i class="uk-icon-check-square-o"></i>
+                            Active
+                        </div>
+                        <div v-if="isLocked(u)" class="uk-text-danger">
+                            <i class="uk-icon-ban"></i>
+                            <span v-if="isLocked(u)" v-text="getLockTime(u)"></span>
+                        </div>
+                    </td>
+                    <td>
+                        <select v-if="isLocked(u)" v-model.number="u.unlockAction" v-on:change="unlockUser(u)">
+                            <option value="0">-- Unlock --</option>
+                            <option value="1">Unlock</option>
+                        </select>
+                        <select v-if="! isLocked(u)" v-model.number="u.lockAction" v-on:change="lockUser(u)">
+                            <option value="0" class="x-lock">-- Lock --</option>
+                            <option value="1" class="x-lock">1 day</option>
+                            <option value="2" class="x-lock">2 days</option>
+                            <option value="3" class="x-lock">3 days</option>
+                            <option value="7" class="x-lock">1 week</option>
+                            <option value="14" class="x-lock">2 weeks</option>
+                            <option value="30" class="x-lock">1 month</option>
+                            <option value="60" class="x-lock">2 months</option>
+                            <option value="90" class="x-lock">3 months</option>
+                            <option value="180" class="x-lock">6 months</option>
+                            <option value="365" class="x-lock">1 year</option>
+                            <option value="40000" class="x-lock">forever</option>
+                        </select>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div is="pagination" v-bind:page="page"></div>
+    </div>
+
+{% endblock%}
