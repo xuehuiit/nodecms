@@ -44,6 +44,11 @@ Run `node script/init-db.js` to generate initial schema as well as administrator
 
 NOTE: re-run this SQL file will remove all existing data.
 
+### create css
+
+`cd www`
+`./less.sh`
+
 ### Test
 
 iTranswarp.js is fully tested. To run tests, make sure:
