@@ -40,11 +40,7 @@ Run `npm install` to install all required packages:
 
 ### Initialize database
 
-Run `node schema > init_db.sql` to generate initial schema as well as administrator's email and password.
-
-You will get `init_db.sql` file in current directory. Run this SQL script by:
-
-    $ mysql -u root -p < init_db.sql
+Run `node script/init-db.js` to generate initial schema as well as administrator's email and password.
 
 NOTE: re-run this SQL file will remove all existing data.
 
