@@ -35,7 +35,7 @@ CREATE TABLE `admaterials` (
   `updated_at` bigint(20) NOT NULL,
   `version` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `adperiods`
@@ -52,7 +52,7 @@ CREATE TABLE `adperiods` (
   `updated_at` bigint(20) NOT NULL,
   `version` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `adslots`
@@ -74,7 +74,7 @@ CREATE TABLE `adslots` (
   `version` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uni_adslot_alias` (`alias`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `articles`
@@ -96,7 +96,7 @@ CREATE TABLE `articles` (
   `updated_at` bigint(20) NOT NULL,
   `version` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `attachments`
@@ -117,7 +117,7 @@ CREATE TABLE `attachments` (
   `updated_at` bigint(20) NOT NULL,
   `version` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `authusers`
@@ -135,7 +135,7 @@ CREATE TABLE `authusers` (
   `version` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uni_auth_id` (`auth_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `boards`
@@ -153,7 +153,7 @@ CREATE TABLE `boards` (
   `updated_at` bigint(20) NOT NULL,
   `version` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `categories`
@@ -169,7 +169,7 @@ CREATE TABLE `categories` (
   `updated_at` bigint(20) NOT NULL,
   `version` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `localusers`
@@ -184,7 +184,7 @@ CREATE TABLE `localusers` (
   `version` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uni_user_id` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `navigations`
@@ -199,7 +199,7 @@ CREATE TABLE `navigations` (
   `updated_at` bigint(20) NOT NULL,
   `version` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `pages`
@@ -217,7 +217,7 @@ CREATE TABLE `pages` (
   `version` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uni_alias` (`alias`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `randoms`
@@ -232,7 +232,7 @@ CREATE TABLE `randoms` (
   `version` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uni_rnd_value` (`value`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `replies`
@@ -251,7 +251,7 @@ CREATE TABLE `replies` (
   `updated_at` bigint(20) NOT NULL,
   `version` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `resources`
@@ -265,7 +265,7 @@ CREATE TABLE `resources` (
   `updated_at` bigint(20) NOT NULL,
   `version` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `settings`
@@ -281,7 +281,7 @@ CREATE TABLE `settings` (
   `version` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uni_key` (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `texts`
@@ -295,7 +295,7 @@ CREATE TABLE `texts` (
   `updated_at` bigint(20) NOT NULL,
   `version` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `topics`
@@ -319,7 +319,7 @@ CREATE TABLE `topics` (
   `updated_at` bigint(20) NOT NULL,
   `version` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `users`
@@ -338,7 +338,7 @@ CREATE TABLE `users` (
   `version` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uni_email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `wikipages`
@@ -356,7 +356,7 @@ CREATE TABLE `wikipages` (
   `updated_at` bigint(20) NOT NULL,
   `version` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `wikis`
@@ -374,6 +374,6 @@ CREATE TABLE `wikis` (
   `updated_at` bigint(20) NOT NULL,
   `version` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 SET FOREIGN_KEY_CHECKS = 1;
