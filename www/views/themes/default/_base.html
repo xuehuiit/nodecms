@@ -31,9 +31,7 @@
     <link rel="alternate" href="/feed" title="{{ __website__.name }}" type="application/rss+xml" />
     {% block meta %}<!-- meta here -->{% endblock %}
     {% if __production__ %}
-    <link rel="stylesheet" href="/static/themes/{{ __theme__ }}/css/codemirror.css" />
-    <link rel="stylesheet" href="/static/themes/{{ __theme__ }}/css/highlight.css" />
-    <link rel="stylesheet" href="/static/themes/{{ __theme__ }}/css/itranswarp.css" />
+    <link rel="stylesheet" href="{{ __cdn__ }}/static/themes/{{ __theme__ }}/css/all.css?v={{__version__}}" />
     {% else %}
     <!-- BEGIN CSS COMPRESS -->
     <link rel="stylesheet" href="/static/themes/{{ __theme__ }}/css/codemirror.css" />
@@ -45,20 +43,7 @@
     <link rel="stylesheet" href="/static/themes/{{ __theme__ }}/css/ie.css?v={{__version__}}" />
     <![endif]-->
     {% if __production__ %}
-    <script src="/static/themes/{{ __theme__ }}/js/jquery.js"></script>
-    <script src="/static/themes/{{ __theme__ }}/js/underscore.js"></script>
-    <script src="/static/themes/{{ __theme__ }}/js/moment.js"></script>
-    <script src="/static/themes/{{ __theme__ }}/js/marked.js"></script>
-    <script src="/static/themes/{{ __theme__ }}/js/uikit.js"></script>
-    <script src="/static/themes/{{ __theme__ }}/js/uikit/tooltip.js"></script>
-    <script src="/static/themes/{{ __theme__ }}/js/uikit/slideshow.js"></script>
-    <script src="/static/themes/{{ __theme__ }}/js/uikit/datepicker.js"></script>
-    <script src="/static/themes/{{ __theme__ }}/js/uikit/autocomplete.js"></script>
-    <script src="/static/themes/{{ __theme__ }}/js/uikit/lightbox.js"></script>
-    <script src="/static/themes/{{ __theme__ }}/js/uikit/htmleditor.js"></script>
-    <script src="/static/themes/{{ __theme__ }}/js/codemirror.js"></script>
-    <script src="/static/themes/{{ __theme__ }}/js/highlight.js"></script>
-    <script src="/static/themes/{{ __theme__ }}/js/theme.js"></script>
+    <script src="{{ __cdn__ }}/static/themes/{{ __theme__ }}/js/all.js?v={{__version__}}"></script>
     {% else %}
     <!-- BEGIN JAVASCRIPT COMPRESS -->
     <script src="/static/themes/{{ __theme__ }}/js/jquery.js"></script>
@@ -426,6 +411,7 @@
             </div>
         </div>
     </div>
+
 
     <div id="modal-signin" class="uk-modal">
         <div class="uk-modal-dialog">

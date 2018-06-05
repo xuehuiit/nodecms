@@ -39,9 +39,9 @@ module.exports = {
         // mysql username:
         username: 'root',
         // mysql password:
-        password: 'password',
+        password: '123456',
         // database name:
-        database: 'itranswarp',
+        database: 'xuehuiitcms',
         // log sql:
         showSql: false,
         // pool settings:
