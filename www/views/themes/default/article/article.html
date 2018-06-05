@@ -10,7 +10,8 @@
     <meta property="og:url" content="http://{{ __request__.host }}/article/{{ article.id }}" />
     <meta property="og:title" content="{{ article.name }}" />
     <meta property="og:description" content="{{ article.name }}" />
-    <meta property="og:image" content="http://{{ __request__.host }}/files/attachments/{{ article.cover_id }}/l" />
+    <meta property="og:image" content="{{ __cdn__ }}/files/attachments/{{ article.cover_id }}/l" />
+    <meta property="og:tag" content="{{ article.tags }}" />
 {% endblock %}
 
 {% block title %}{{ article.name }}{% endblock %}
@@ -54,7 +55,7 @@ $(function () {
         {{ article.content|safe }}
     </div>
 
-    <div class="x-sponsor-a uk-clearfix"><!-- sponsor A --></div>
+    <div id="x-sponsor-a" class="uk-clearfix"><!-- sponsor A --></div>
 
     <div class="x-anchor"><a name="comments"></a></div>
 

@@ -4,5 +4,5 @@
 
 # npm install supervisor -g
 
-export NODE_ENV=development
+export NODE_ENV=production
 supervisor -i static,script,test,views,node_modules start.js

@@ -1,5 +1,9 @@
 // custom.less
 
+em {
+    font-style: normal;
+}
+
 #header {
     position: fixed;
     left:     0;
@@ -45,6 +49,21 @@
         padding-left: 15px;
         border-left: 1px solid @grid-divider-border;
     }
+}
+
+// code:
+
+.x-code {
+    font-family: Consolas, monospace, serif;
+    word-break: break-all;
+}
+
+// textarea:
+
+textarea.x-codearea {
+    resize: none;
+    font-size: 14px;
+    font-family: Consolas, monospace, serif;
 }
 
 // fix uk-grid as flex:
@@ -99,6 +118,7 @@ pre.ascii {
     border: none;
     background-color:transparent;
     font-family: "Courier New",Consolas,monospace !important;
+    word-break: normal !important;
 }
 
 // for container:
@@ -154,7 +174,6 @@ pre.ascii {
 
     }
 }
-
 
 // avatar:
 

@@ -535,7 +535,12 @@ const schemas = {
         type: 'object',
         properties: {
             url: PROPERTY.URL,
-            weight: PROPERTY.INTEGER,
+            weight: {
+                type: 'integer',
+                minimum: 1,
+                maximum: 100
+            },
+            keywords: PROPERTY.TAGS,
             geo: PROPERTY.GEO,
             start_at: PROPERTY.DATE,
             end_at: PROPERTY.DATE,

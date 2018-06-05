@@ -125,10 +125,11 @@ function _toRssDate(dt) {
     return new Date(dt).toGMTString();
 }
 
-async function getFeed(domain) {
+async function _getFeed(domain) {
     logger.info('generate rss...');
     let
-        url_prefix = (config.session.https ? 'https://' : 'http://') + domain + '/article/',
+        schema = (config.session.https ? 'https://' : 'http://'),
+        url_prefix = schema + domain + '/article/',
         articles = await getRecentArticles(20),
         last_publish_at = articles.length === 0 ? 0 : articles[0].publish_at,
         website = await settingApi.getWebsiteSettings(),
@@ -136,7 +137,8 @@ async function getFeed(domain) {
     rss.push('<?xml version="1.0"?>\n');
     rss.push('<rss version="2.0"><channel><title><![CDATA[');
     rss.push(website.name);
-    rss.push(']]></title><link>http://');
+    rss.push(']]></title><link>');
+    rss.push(schema);
     rss.push(domain);
     rss.push('/</link><description><![CDATA[');
     rss.push(website.description);
@@ -177,8 +179,12 @@ module.exports = {
     getArticle: getArticle,
 
     'GET /feed': async (ctx, next) => {
+        ctx.response.redirect('/feed/articles');
+    },
+
+    'GET /feed/articles': async (ctx, next) => {
         let rss = await cache.get(constants.cache.ARTICLE_FEED, async () => {
-            return await getFeed(ctx.request.host);
+            return await _getFeed(ctx.request.host);
         });
         ctx.response.set('Cache-Control', 'max-age: 3600');
         ctx.response.type = 'text/xml';
